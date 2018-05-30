@@ -19,16 +19,6 @@ public class GameControl : MonoBehaviour {
         bottomTransform = effectorBottom.GetComponent<Transform>();
 	}
 
-    void FixedUpdate()
-    {
-        timeDiff = Time.realtimeSinceStartup - timeBefore;
-        timeBefore = Time.realtimeSinceStartup;
-        if (timeDiff > 0.02)
-        {
-            Debug.Log("GREATER at" + Time.realtimeSinceStartup + "seconds. Diff: " + timeDiff );
-        }
-        //Debug.Log("Fixed intervals: " + timeDiff);
-    }
 
     // Update is called once per frame
     void Update()

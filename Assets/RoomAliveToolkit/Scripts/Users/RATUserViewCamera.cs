@@ -104,6 +104,7 @@ namespace RoomAliveToolkit
         protected Vector3 cam1Pos;
         protected Vector3 cam2Pos;
 
+        private RATUser ratUser;
         private bool toggleCam = true;
         private float KeyInputDelayTimer; // Keyboard input delay... quick&dirty
         private bool resetCam = false;
@@ -111,8 +112,7 @@ namespace RoomAliveToolkit
 
         private float timeBefore = 0f;
         private float timeDiff;
-
-        private Vector3 leftEye, rightEye;
+        private Vector3 leftEye, rightEye, head;
 
         public bool hasManager
         {
@@ -176,6 +176,7 @@ namespace RoomAliveToolkit
             if (projectionManager != null)
                 projectionManager.RegisterUser(this);
 
+            ratUser = GetComponent<RATUser>();
             //Code assumes that this script is added to the camera GO 
             cameraGO = this.gameObject;
 
@@ -266,21 +267,23 @@ namespace RoomAliveToolkit
         /// </summary>
         public void RenderUserView()
         {
+            head = ratUser.getHeadPosition();
             cam1Pos = cam1.transform.localPosition;
-
+            leftEye = new Vector3(head.x + separation, head.y, head.z);
+            rightEye = new Vector3(head.x - separation, head.y, head.z);
             if (isOn3D)
             {
                 if (toggleCam) //Cam1
                 {
-                    //toggleCam = !toggleCam;
-                    cam1.transform.localPosition = new Vector3(cam1Pos.x + separation, cam1Pos.y, cam1Pos.z);
+                    toggleCam = !toggleCam;
+                    cam1.transform.localPosition = leftEye;
                     cam1.projectionMatrix = p1;
 
                 }
                 else //Cam2
                 {
                     toggleCam = !toggleCam;
-                    cam1.transform.localPosition = new Vector3(cam1Pos.x - separation, cam1Pos.y, cam1Pos.z);
+                    cam1.transform.localPosition = rightEye;
                     cam1.projectionMatrix = p2;
                 }
             }
