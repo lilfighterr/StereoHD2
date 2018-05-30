@@ -104,10 +104,15 @@ namespace RoomAliveToolkit
         protected Vector3 cam1Pos;
         protected Vector3 cam2Pos;
 
-        private int toggleCam = 1;
+        private bool toggleCam = true;
         private float KeyInputDelayTimer; // Keyboard input delay... quick&dirty
         private bool resetCam = false;
         private bool isOn3D = false;
+
+        private float timeBefore = 0f;
+        private float timeDiff;
+
+        private Vector3 leftEye, rightEye;
 
         private int fixedUpdateCount = 0, lateUpdateCount = 0, renderCount = 0;
 
@@ -194,7 +199,7 @@ namespace RoomAliveToolkit
             initialized = true;
         }
 
-        public void Update()
+        public void FixedUpdate()
         {
             // this mostly updates the little debug view in the scene editor view
             if (debugPlaneSize < 0)
@@ -241,9 +246,24 @@ namespace RoomAliveToolkit
                 debugPlaneM.triangles = indices;
                 meshFilter.mesh = debugPlaneM;
             }
+            timeDiff = Time.realtimeSinceStartup - timeBefore;
+            timeBefore = Time.realtimeSinceStartup;            
+            StartCoroutine(LateFixedUpdate());
         }
 
-        public void LateUpdate()
+        IEnumerator LateFixedUpdate()
+        {
+            if (!initialized) yield break;
+            yield return new WaitForFixedUpdate();
+            if (timeDiff > 0.02)
+            {
+                Debug.Log("GREATER at" + Time.realtimeSinceStartup + "seconds. Diff: " + timeDiff);
+                toggleCam = !toggleCam;
+            }
+            RenderUserView();
+        }
+
+        /*public void LateUpdate()
         {
             if (!initialized)
                 return;
@@ -254,7 +274,7 @@ namespace RoomAliveToolkit
             // Setup things for the last pass which will be rendered from the perspective of the projectors (i.e., Render Pass 3)
             // this "pass" doesn't  do any rendering at this point, but merely sets the correct shaders/materials on all 
             // physical objects in the scene. 
-        }
+        }*/
 
 
         /// <summary>
@@ -266,30 +286,31 @@ namespace RoomAliveToolkit
             cam1.cullingMask = virtualObjectsMask;
             cam1.backgroundColor = backgroundColor;
             cam1.targetTexture = targetRGBTexture;
-            
+            cam1Pos = cam1.transform.localPosition;
 
             //Cam2
             cam2.cullingMask = virtualObjectsMask;
             cam2.backgroundColor = backgroundColor;
             cam2.targetTexture = targetRGBTexture;
             cam2.clearFlags = CameraClearFlags.SolidColor;
-            
+            cam2Pos = cam2.transform.localPosition;
+
+            leftEye = new Vector3(cam1Pos.x + separation, cam1Pos.y, cam1Pos.z);
+            rightEye = new Vector3(cam2Pos.x - separation, cam2Pos.y, cam2Pos.z);
             if (isOn3D)
             {
-                if (toggleCam == 1)
+                if (toggleCam)
                 {
-                    toggleCam = 0;
-                    cam1Pos = cam1.transform.localPosition;
-                    cam1.transform.localPosition = new Vector3(cam1Pos.x + separation, cam1Pos.y, cam1Pos.z);
+                    toggleCam = !toggleCam;        
+                    cam1.transform.localPosition = leftEye;
                     cam1.clearFlags = CameraClearFlags.SolidColor;
                     cam1.Render();
                     cam1.clearFlags = CameraClearFlags.Nothing;
                 }
                 else
                 {
-                    toggleCam = 1;
-                    cam2Pos = cam2.transform.localPosition;
-                    cam2.transform.localPosition = new Vector3(cam2Pos.x - separation, cam2Pos.y, cam2Pos.z);
+                    toggleCam = !toggleCam;               
+                    cam2.transform.localPosition = rightEye;
                     cam2.Render();
                     cam2.clearFlags = CameraClearFlags.Nothing;
                 }
@@ -348,7 +369,7 @@ namespace RoomAliveToolkit
             if (Input.GetKey(KeyCode.F1) && KeyInputDelayTimer + 0.1f < Time.time)
             {
                 KeyInputDelayTimer = Time.time;
-                toggleCam = 1;
+                toggleCam = !toggleCam;
             }
 
             // Change Separation
