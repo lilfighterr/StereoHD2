@@ -49,7 +49,7 @@ namespace RoomAliveToolkit
         [Space(10)]
 
         [Space(10)]
-        public float fieldOfView = 140;
+        public float fieldOfView = 120;
         public float nearClippingPlane = 0.1f;
         public float farClippingPlane = 8f;
         public LayerMask virtualObjectsMask; //select only the layers you want to see in the user's view
@@ -111,8 +111,11 @@ namespace RoomAliveToolkit
         private bool isOn3D = false;
 
         private float timeBefore = 0f;
-        private float timeDiff;
+        private float timeTest = 0f;
+        private float timeDiff, timeTestDiff;
         private Vector3 leftEye, rightEye, head;
+
+        private int fixedUpdateCount = 0, lateUpdateCount = 0, renderCount = 0;
 
         public bool hasManager
         {
@@ -199,6 +202,8 @@ namespace RoomAliveToolkit
 
         public void FixedUpdate()
         {
+            //fixedUpdateCount++;
+            //Debug.Log("FixedUpdate: " + fixedUpdateCount);
             // this mostly updates the little debug view in the scene editor view
             if (debugPlaneSize < 0)
                 debugPlaneSize = 0;
@@ -232,24 +237,36 @@ namespace RoomAliveToolkit
                 debugPlaneM.triangles = indices;
                 meshFilter.mesh = debugPlaneM;
             }
-            timeDiff = Time.realtimeSinceStartup - timeBefore;
-            timeBefore = Time.realtimeSinceStartup;
-            StartCoroutine(LateFixedUpdate());
+            
+            //StartCoroutine(LateFixedUpdate());
         }
 
-        IEnumerator LateFixedUpdate()
+        /*IEnumerator LateFixedUpdate()
         {
             if (!initialized) yield break;
             yield return new WaitForFixedUpdate();
+            lateUpdateCount++;
+            Debug.Log("LateUpdate: " + lateUpdateCount);
             if (timeDiff > 0.02)
             {
                 Debug.Log("GREATER at" + Time.realtimeSinceStartup + "seconds. Diff: " + timeDiff);
                 toggleCam = !toggleCam;
             }
             RenderUserView();
-        }
-        /*public void LateUpdate()
+        }*/
+        public void LateUpdate()
         {
+            /*timeDiff = Time.realtimeSinceStartup - timeBefore;
+            timeBefore = Time.realtimeSinceStartup;
+            
+
+            
+                Debug.Log("TimeDiff: " + timeDiff + " at " + Time.realtimeSinceStartup);*/
+                //toggleCam = !toggleCam;
+            
+
+            //lateUpdateCount++;
+            //Debug.Log("LateUpdate: " + lateUpdateCount);
             if (!initialized)
                 return;
 
@@ -259,7 +276,7 @@ namespace RoomAliveToolkit
             // Setup things for the last pass which will be rendered from the perspective of the projectors (i.e., Render Pass 3)
             // this "pass" doesn't  do any rendering at this point, but merely sets the correct shaders/materials on all 
             // physical objects in the scene. 
-        }*/
+        }
 
 
         /// <summary>
@@ -267,10 +284,14 @@ namespace RoomAliveToolkit
         /// </summary>
         public void RenderUserView()
         {
+            //timeTest = Time.realtimeSinceStartup;
+            //renderCount++;
+            //Debug.Log("Render: " + renderCount);
             head = ratUser.getHeadPosition();
             cam1Pos = cam1.transform.localPosition;
             leftEye = new Vector3(head.x + separation, head.y, head.z);
             rightEye = new Vector3(head.x - separation, head.y, head.z);
+
             if (isOn3D)
             {
                 if (toggleCam) //Cam1
@@ -306,6 +327,8 @@ namespace RoomAliveToolkit
                 }
             }
             cam1.clearFlags = CameraClearFlags.SolidColor;
+            timeTestDiff = Time.realtimeSinceStartup - timeTest;
+            //Debug.Log("Render Duration: "+ timeTestDiff);
         }
 
         public virtual void RenderProjection(Camera camera)
