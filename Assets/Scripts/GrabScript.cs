@@ -109,40 +109,6 @@ public class GrabScript : MonoBehaviour {
         previousVel = characterRb2d.velocity;
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        Vector3 contactNormal = collision.contacts[0].normal.normalized; //Gives unit vector direction normal to point of contact
-
-
-        //Debug.Log("x: " +xForce + " y: "+ yForce + " Vel: "+ velocity + " UnityVel: "+characterRb2d.velocity+" Accel: " + acceleration);
-    }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        //While in contact with ball
-        Vector3 contactNormal = collision.contacts[0].normal.normalized; //Gives unit vector direction normal to point of contact
-        if (forceFeedback)
-        {
-        }
-        else
-        {
-            xForce = 0;
-            yForce = 0;
-        }
-        MatlabServer.instance.collisionStatus = 1f;
-        MatlabServer.instance.xForce = xForce;
-        MatlabServer.instance.yForce = yForce;
-
-        //Debug.DrawRay(collision.contacts[0].point, contactNormal, Color.red, 2, true);
-    }
-    private void OnCollisionExit(Collision collision)
-    {
-        xForce = 0;
-        yForce = 0;
-        MatlabServer.instance.collisionStatus = 0f;
-        MatlabServer.instance.xForce = xForce;
-        MatlabServer.instance.yForce = yForce;
-    }
 
     /*public Vector3 CalibratedMovement()
     {

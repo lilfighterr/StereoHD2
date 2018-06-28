@@ -13,7 +13,9 @@ public class MatlabServer : MonoBehaviour {
 
     public static MatlabServer instance;
     public float xMove, yMove, zMove = 0;
-    public float xForce, yForce = 0;
+    public float xFTop = 0, yFTop = 0, zFTop = 0; //Cartesian top joint forces
+    public float xFBot = 0, yFBot = 0, zFBot = 0; //Cartesian bot joint forces
+    public float xForce = 0, yForce =0;
     public float collisionStatus = 0;
     public float forceFeedback = 0;
     public float [] recvBuffer;
@@ -26,7 +28,7 @@ public class MatlabServer : MonoBehaviour {
     private bool stop = false;
     private bool threadRunning = false;
     private int recvSize = 48; //Amount of information in bytes to receive from Simulink. Double is 8 bytes.
-    private int sendSize = 32; //Amount of information in bytes to send to Simulink.
+    private int sendSize = 48; //Amount of information in bytes to send to Simulink.
 
 
     // Use this for initialization
@@ -124,15 +126,11 @@ public class MatlabServer : MonoBehaviour {
             {
                 recvBuffer[i] = (float)BitConverter.ToDouble(dataRecv, i * 8);
             }
-            /*xMove = (float)BitConverter.ToDouble(dataRecv, 0); //x
-            yMove = (float)BitConverter.ToDouble(dataRecv, 8); //y
-            zMove = (float)BitConverter.ToDouble(dataRecv, 16); //z*/
-
 
             //Debug.Log(recvBuffer[0] + " " + recvBuffer[1] + " " + recvBuffer[2] + " " + recvBuffer[3] + " " + recvBuffer[4] + " " + recvBuffer[5]); //Display X/Y Position
 
             //Concatenate Collision Status, ForceFeedbackStatus, xForce, yForce. 
-            dataSendLINQ = (BitConverter.GetBytes((double)collisionStatus)).Concat(BitConverter.GetBytes((double)forceFeedback)).Concat(BitConverter.GetBytes((double)xForce)).Concat(BitConverter.GetBytes((double)yForce));
+            dataSendLINQ = (BitConverter.GetBytes((double)xFTop)).Concat(BitConverter.GetBytes((double)yFTop)).Concat(BitConverter.GetBytes((double)zFTop)).Concat(BitConverter.GetBytes((double)xFBot)).Concat(BitConverter.GetBytes((double)yFBot)).Concat(BitConverter.GetBytes((double)zFBot));
             dataSend = dataSendLINQ.ToArray(); //Convert to byte Array from IEnumerable byte Array
 
             //Debug.Log("X_f: " + xForce + " Y_f: " + yForce); //xForce, yForce
