@@ -15,6 +15,7 @@ public class HoleSpawner : MonoBehaviour
     private float xSpawn, ySpawn, zSpawn;
     private bool start = false;
     private float KeyInputDelayTimer;
+    private Transform Hole;
 
     // Use this for initialization
     void Start()
@@ -23,25 +24,35 @@ public class HoleSpawner : MonoBehaviour
         holeSize = HolePrefab.GetComponent<Transform>();
         center = new Vector3(boxSize.position.x, boxSize.position.y, boxSize.position.z);
         SpawnHole();
+        Hole = GameObject.Find("HoopHole(Clone)").GetComponent<Transform>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        /*if (Input.GetKey(KeyCode.KeypadEnter) && KeyInputDelayTimer + 0.1f < Time.time)
+        if (Input.GetKey(KeyCode.KeypadEnter) && KeyInputDelayTimer + 0.1f < Time.time)
         {
             KeyInputDelayTimer = Time.time;
-            SpawnHole();
-        }*/
+            Hole.position = MoveHole();
+        }
 
     }
 
-    public void SpawnHole()
+    public void SpawnHole() // Spawn Hole. Only used once
     {
         xSpawn = Random.Range(center.x - boxSize.lossyScale.x / 2 + holeSize.lossyScale.x / 2, center.x + boxSize.lossyScale.x / 2 - holeSize.lossyScale.x / 2);
         ySpawn = center.y;
         zSpawn = Random.Range(center.z - boxSize.lossyScale.z / 2 + holeSize.lossyScale.y, center.z + boxSize.lossyScale.z / 2 - holeSize.lossyScale.y);
         Vector3 pos = new Vector3(xSpawn, ySpawn, zSpawn);
         Instantiate(HolePrefab, pos, Quaternion.AngleAxis(-90,Vector3.left));
+    }
+
+    public Vector3 MoveHole() // Move hole. Called every time "enter" is pressed
+    {
+        xSpawn = Random.Range(center.x - boxSize.lossyScale.x / 2 + holeSize.lossyScale.x / 2, center.x + boxSize.lossyScale.x / 2 - holeSize.lossyScale.x / 2);
+        ySpawn = center.y;
+        zSpawn = Random.Range(center.z - boxSize.lossyScale.z / 2 + holeSize.lossyScale.y, center.z + boxSize.lossyScale.z / 2 - holeSize.lossyScale.y);
+        Vector3 pos = new Vector3(xSpawn, ySpawn, zSpawn);
+        return pos;
     }
 }

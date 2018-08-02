@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameControl : MonoBehaviour {
+public class GameControl : MonoBehaviour
+{
     public static GameControl instance; // Allows easy access from other scripts. They just have to do GameControl.instance.something
 
     public GameObject effectorTop;
@@ -40,17 +41,17 @@ public class GameControl : MonoBehaviour {
         else if (instance != this) //If the game object finds that instance is already on another game object, then this destroys itself as it's not needed
         {
             Destroy(gameObject);
-        }        
+        }
     }
 
     // Use this for initialization
-    void Start ()
+    void Start()
     {
         topTransform = effectorTop.GetComponent<Transform>();
         bottomTransform = effectorBottom.GetComponent<Transform>();
         ballPosition = Ball.GetComponent<Transform>().position;
         timer = duration;
-	}
+    }
 
 
     // Update is called once per frame
@@ -98,7 +99,7 @@ public class GameControl : MonoBehaviour {
             }
             else //When gamecountdown ends
             {
-                if (sceneIndex == SceneName.Catcher && gameStart)
+                if (gameStart)
                 {
                     timer -= Time.deltaTime;
                     countdownText.text = timer.ToString("F0");
@@ -130,5 +131,11 @@ public class GameControl : MonoBehaviour {
         {
             return false;
         }
+    }
+
+    public void Restart()
+    {
+        MatlabServer.instance.StopThread();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); //Reload current scene to restart
     }
 }
