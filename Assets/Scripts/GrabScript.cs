@@ -10,7 +10,6 @@ public class GrabScript : MonoBehaviour {
     public Vector3 speed;
     public float xForce, yForce;
     public float collisionStatus;
-    public RoomAliveToolkit.RATUserViewCamera userCam;
 
     private Vector3 mousePosScreen, currentPos, previousPos;
     private Vector3 previousVel;
@@ -21,7 +20,7 @@ public class GrabScript : MonoBehaviour {
     private float a = 0, b = 0, c = 0, d = 0;
     private bool forceFeedback;
     private Transform characterTransform;
-    private Vector3 startTop, startBottom, robotTop, robotBottom;
+    private Vector3 startTop, startBottom, robotTop, robotBottom, robotMiddle;
     private Vector3 difference;
     private bool initializedBias = false;
     private void Start()
@@ -83,7 +82,7 @@ public class GrabScript : MonoBehaviour {
                 }
                 characterTransform.position = robotTop + difference;
             }
-            else
+            else if (name == "Bottom")
             {
                 robotBottom = new Vector3(-MatlabServer.instance.recvBuffer[4], MatlabServer.instance.recvBuffer[5], MatlabServer.instance.recvBuffer[3]);
                 if (!initializedBias)
@@ -93,6 +92,19 @@ public class GrabScript : MonoBehaviour {
                     Debug.Log("BotDiff: " + difference);
                 }
                 characterTransform.position = robotBottom + difference;
+            }
+            else
+            {
+                robotTop = new Vector3(-MatlabServer.instance.recvBuffer[1], MatlabServer.instance.recvBuffer[2], MatlabServer.instance.recvBuffer[0]);
+                robotBottom = new Vector3(-MatlabServer.instance.recvBuffer[4], MatlabServer.instance.recvBuffer[5], MatlabServer.instance.recvBuffer[3]);
+                robotMiddle = (robotTop - robotBottom) / 2.0f + robotBottom;
+
+                if (!initializedBias)
+                {
+                    initializedBias = true;
+                    difference = startTop - robotMiddle;
+                }
+                characterTransform.position = robotMiddle + difference;
             }
             
             //characterRb2d.velocity = (CalibratedMovement() - characterTransform.position) * 30;
