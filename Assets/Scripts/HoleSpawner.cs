@@ -15,7 +15,9 @@ public class HoleSpawner : MonoBehaviour
     private float xSpawn, ySpawn, zSpawn;
     private bool start = false;
     private float KeyInputDelayTimer;
-    private Transform Hole;
+    private GameObject Hole;
+    private Transform HoleTransform;
+    public HoleScore HoleScript;
 
     // Use this for initialization
     void Start()
@@ -24,7 +26,9 @@ public class HoleSpawner : MonoBehaviour
         holeSize = HolePrefab.GetComponent<Transform>();
         center = new Vector3(boxSize.position.x, boxSize.position.y, boxSize.position.z);
         SpawnHole();
-        Hole = GameObject.Find("HoopHole(Clone)").GetComponent<Transform>();
+        Hole = GameObject.Find("HoopHole(Clone)");
+        HoleTransform = Hole.GetComponent<Transform>();
+        HoleScript = Hole.GetComponentInChildren<HoleScore>();
     }
 
     // Update is called once per frame
@@ -33,7 +37,12 @@ public class HoleSpawner : MonoBehaviour
         if (Input.GetKey(KeyCode.KeypadEnter) && KeyInputDelayTimer + 0.1f < Time.time)
         {
             KeyInputDelayTimer = Time.time;
-            Hole.position = MoveHole();
+            HoleTransform.position = MoveHole();
+        }
+        if (HoleScript.triggered)
+        {
+            HoleScript.triggered = false;
+            HoleTransform.position = MoveHole();
         }
 
     }

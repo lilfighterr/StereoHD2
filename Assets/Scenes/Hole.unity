@@ -1960,6 +1960,7 @@ GameObject:
   - component: {fileID: 854857666}
   - component: {fileID: 854857665}
   - component: {fileID: 854857667}
+  - component: {fileID: 854857668}
   m_Layer: 0
   m_Name: Server
   m_TagString: Untagged
@@ -2028,7 +2029,26 @@ MonoBehaviour:
   gameOver: 0
   gameStart: 0
   gameCountdown: 0
-  duration: 5
+  duration: 60
+  timeElapsed: 0
+--- !u!114 &854857668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 854857664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55ef609d6365dc04d97631edcf386939, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterPositionX: []
+  characterPositionY: []
+  carPositionX: []
+  carPositionY: []
+  timeElapsed: []
+  lap: []
+  parameters: []
 --- !u!1001 &921665519
 Prefab:
   m_ObjectHideFlags: 0
@@ -2202,7 +2222,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4330497791165362, guid: 024f5f94afa42f84ca70343bce3bd065, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 1.1509552
+      value: 1.1491
       objectReference: {fileID: 0}
     - target: {fileID: 4330497791165362, guid: 024f5f94afa42f84ca70343bce3bd065, type: 2}
       propertyPath: m_LocalRotation.x
@@ -3951,6 +3971,7 @@ MonoBehaviour:
   Box: {fileID: 1662270168}
   center: {x: 0, y: 0, z: 0}
   size: {x: 0, y: 0, z: 0}
+  HoleScript: {fileID: 0}
 --- !u!4 &1584298123
 Transform:
   m_ObjectHideFlags: 0
@@ -5310,3 +5331,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 663297973dd061f4bab194e022c2aac9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  trials: 0
+  dropPosition: {x: 0, y: 0, z: 0}

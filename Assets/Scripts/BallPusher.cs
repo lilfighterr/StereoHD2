@@ -7,6 +7,10 @@ public class BallPusher : MonoBehaviour {
     public float pushForceMin;
     public float pushForceMax;
 
+    [HideInInspector]
+    public List<double> xDir, yDir, zDir, time;
+    public int listLength = 0;
+
     private float KeyInputDelayTimer;
     private Rigidbody ballBody;
     private Vector3 ballPosition;
@@ -22,19 +26,25 @@ public class BallPusher : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKey(KeyCode.Q) && KeyInputDelayTimer + 0.1f < Time.time)
+        time.Add(Time.time);
+        xDir.Add(transform.position.x);
+        yDir.Add(transform.position.y);
+        zDir.Add(transform.position.z);
+        listLength++;
+
+        if (Input.GetKey(KeyCode.Q) && KeyInputDelayTimer + 0.1f < Time.time) // Push forward
         {
             KeyInputDelayTimer = Time.time;
             ballBody.AddForce(0, 0, -Random.Range(pushForceMin, pushForceMax), ForceMode.Force);
         }
 
-        if (Input.GetKey(KeyCode.R) && KeyInputDelayTimer + 0.1f < Time.time)
+        if (Input.GetKey(KeyCode.R) && KeyInputDelayTimer + 0.1f < Time.time) // Reset position
         {
             GetComponent<Transform>().position = ballPosition;
             GetComponent<Rigidbody>().velocity = Vector3.zero;
             GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
         }
-        if (Time.time - timeSpawned > 6)
+        if (Time.time - timeSpawned > 6) // Destroy after 6s
         {
             Destroy(gameObject);
         }

@@ -38,7 +38,7 @@ public class SaveToExcel : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    /*void Update()
     {
         if (GameControl.instance.gameOver && !saved)
         {
@@ -53,25 +53,25 @@ public class SaveToExcel : MonoBehaviour
             table.Add(lap);
             table.Add(parameters);
 
-            Save();
+            Save(table, numParams, "Save_Data");
         }
-    }
+    }*/
 
-    private void Save()
+    public void Save(List<List<double>> saveTable, int numParameters, string fileName) // Any script can call this and save something to excel
     {
         string delimiter = ",";
 
         StringBuilder sb = new StringBuilder();
 
-        for (int index = 0; index < numParams; index++)
-            sb.AppendLine(string.Join(delimiter, table[index]));
+        for (int index = 0; index < numParameters; index++)
+            sb.AppendLine(string.Join(delimiter, saveTable[index]));
 
 
-        string filePath = getPath();
+        string filePath = getPath(fileName);
         while (File.Exists(filePath)) //If file exists, change the number
         {
             saveNum++;
-            filePath = getPath();
+            filePath = getPath(fileName);
         }
         StreamWriter outStream = System.IO.File.CreateText(filePath);
         outStream.WriteLine(sb);
@@ -80,16 +80,16 @@ public class SaveToExcel : MonoBehaviour
     }
 
     // Following method is used to retrive the relative path as device platform
-    private string getPath()
+    private string getPath(string name)
     {
 #if UNITY_EDITOR
-        return Application.dataPath + "/CSV/" + "Saved_data_" + saveNum + ".csv";
+        return Application.dataPath + "/CSV/" + name +"_" + saveNum + ".csv";
 #elif UNITY_ANDROID
-            return Application.persistentDataPath+"Saved_data_"+saveNum+".csv";
+            return Application.persistentDataPath+ name +"_" + saveNum + ".csv";
 #elif UNITY_IPHONE
-            return Application.persistentDataPath+"/"+"Saved_data_"+saveNum+".csv";
+            return Application.persistentDataPath+"/"+ name +"_" + saveNum + ".csv";
 #else
-            return Application.dataPath +"/"+"Saved_data_"+saveNum+".csv";
+            return Application.dataPath +"/CSV/"+ name +"_" + saveNum + ".csv";
 #endif
     }
 

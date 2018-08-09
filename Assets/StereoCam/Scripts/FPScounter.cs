@@ -21,11 +21,13 @@ public class FPScounter : MonoBehaviour
     private double fps = 15.0; // Current FPS
     private double lastSample;
     private float gotIntervals = 0;
+    private RoomAliveToolkit.RATUserViewCamera userCamera;
 
     void Start()
     {
         timeleft = updateInterval;
         lastSample = Time.realtimeSinceStartup;
+        userCamera = gameObject.GetComponentInChildren<RoomAliveToolkit.RATUserViewCamera>();
     }
 
     double GetFPS() { return fps; }
@@ -57,5 +59,8 @@ public class FPScounter : MonoBehaviour
     void OnGUI()
     {
         GUI.Box(new Rect(Screen.width - 160, 10, 150, 40), fps.ToString("f2"));
+        GUI.Box(new Rect(Screen.width - 160, 30, 150, 40), "Sep: " + userCamera.separation.ToString("f5"));
+        GUI.Box(new Rect(Screen.width - 160, 50, 150, 40), "Con: " + userCamera.convergence.ToString("f5"));
+        GUI.Box(new Rect(Screen.width - 160, 70, 150, 40), "Fov: " + userCamera.fieldOfView.ToString("f5"));
     }
 }

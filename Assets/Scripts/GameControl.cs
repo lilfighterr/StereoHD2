@@ -17,6 +17,7 @@ public class GameControl : MonoBehaviour
     public bool gameStart = false;
     public bool gameCountdown = false;
     public float duration = 60;
+    public float timeElapsed = 0;
 
     private Transform topTransform;
     private Transform bottomTransform;
@@ -26,7 +27,6 @@ public class GameControl : MonoBehaviour
     private float KeyInputDelayTimer;
     private float timeLeft = 4.5f; //For 3s countdown
     private float viewedTime;
-    private float timeElapsed = 0;
     private float timer;
 
     // Use this for initialization
@@ -101,6 +101,7 @@ public class GameControl : MonoBehaviour
             {
                 if (gameStart)
                 {
+                    timeElapsed += Time.deltaTime;
                     timer -= Time.deltaTime;
                     countdownText.text = timer.ToString("F0");
                     gameOver = TimerCheckGameEnd(timer);

@@ -6,20 +6,25 @@ public class GravityWell : MonoBehaviour {
     public Transform topJoint;
     public float gain;
     public Vector3 force;
+    public float timeSpawned;
+    public float xDiff, yDiff, zDiff;
 
     private Vector3 displacementFromTopJoint;
     private SphereCollider myCollider;
+    private GravityWellSpawner gravitySpawnerScript;
     private float distanceMinimum = 0.01f; //DO NOT SET TO 0 OR ELSE WILL GO TO INF
     private bool snap = false;
     private float KeyInputDelayTimer;
     private float normalizedGain;
-    public float xDiff, yDiff, zDiff;
     private int xSign, ySign, zSign;
 
     // Use this for initialization
     void Start () {
         myCollider = GetComponent<SphereCollider>();
         normalizedGain = gain/0.01f;
+        topJoint = GameObject.Find("Top").transform;
+        gravitySpawnerScript = GameObject.Find("GravityWellSpawner").GetComponent<GravityWellSpawner>();
+        timeSpawned = Time.time;
 	}
 
     // Update is called once per frame
@@ -45,15 +50,11 @@ public class GravityWell : MonoBehaviour {
 
         }
 
-        if (Input.GetKey(KeyCode.Space) && KeyInputDelayTimer + 0.1f < Time.time)
-        {
-            KeyInputDelayTimer = Time.time;
-            Debug.Log(snap);
-        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
+
         if (other.gameObject.tag == "Player") { 
             snap = true;
         }

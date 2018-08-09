@@ -8,7 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Catcher.unity
     guid: e747b4938a7b425458acfecd22fc36f8
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Hole.unity
     guid: 01aaa29c76de6c746b34a781542ef4cc
   - enabled: 1

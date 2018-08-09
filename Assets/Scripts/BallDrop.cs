@@ -5,6 +5,7 @@ using UnityEngine;
 public class BallDrop : MonoBehaviour {
     // This script will deactivate the grab script, therefore dropping the ball
     public int trials = 0;
+    public Vector3 dropPosition = new Vector3();
 
     private GrabScript grabScript;
     private Rigidbody rigidBody;
@@ -21,13 +22,14 @@ public class BallDrop : MonoBehaviour {
 	void Update () {
         if (Input.GetKey(KeyCode.Space) && KeyInputDelayTimer + 0.1f < Time.time) // Drop ball
         {
-            if (!GameControl.instance.gameStart)
+            KeyInputDelayTimer = Time.time;
+            if (!GameControl.instance.gameStart) //First drop starts the timer
             {
                 GameControl.instance.gameStart = true;
             }
-            if (!GameControl.instance.gameOver)
+            if (!GameControl.instance.gameOver) //Cant drop/pickup if game over
             {
-                KeyInputDelayTimer = Time.time;
+                dropPosition = transform.position;
                 grabScript.enabled = !grabScript.enabled;
                 rigidBody.velocity = Vector3.zero;
                 rigidBody.useGravity = !rigidBody.useGravity;

@@ -365,7 +365,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 142480637}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.7, y: -0.938, z: 0.64}
+  m_LocalPosition: {x: -3.7, y: -0.938, z: 0.08}
   m_LocalScale: {x: 7.5694804, y: 0.025446437, z: 7.564218}
   m_Children: []
   m_Father: {fileID: 291865083}
@@ -628,7 +628,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 291865077}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0418, y: 0.0864, z: 0.6001}
+  m_LocalPosition: {x: 0.0712, y: 0.0864, z: 0.8823}
   m_LocalScale: {x: 0.01, y: 0.09621011, z: 0.01}
   m_Children:
   - {fileID: 779566286}
@@ -1426,7 +1426,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 695707a14d0f0ac42a48a91e0fcf2402, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.60009956
+      value: 0.040102005
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 695707a14d0f0ac42a48a91e0fcf2402, type: 3}
       propertyPath: m_LocalRotation.x
@@ -1597,6 +1597,7 @@ GameObject:
   - component: {fileID: 854857666}
   - component: {fileID: 854857665}
   - component: {fileID: 854857667}
+  - component: {fileID: 854857668}
   m_Layer: 0
   m_Name: Server
   m_TagString: Untagged
@@ -1667,6 +1668,25 @@ MonoBehaviour:
   gameStart: 0
   gameCountdown: 0
   duration: 60
+  timeElapsed: 0
+--- !u!114 &854857668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 854857664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55ef609d6365dc04d97631edcf386939, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterPositionX: []
+  characterPositionY: []
+  carPositionX: []
+  carPositionY: []
+  timeElapsed: []
+  lap: []
+  parameters: []
 --- !u!1 &858916891
 GameObject:
   m_ObjectHideFlags: 0
@@ -2384,7 +2404,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1187102698}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.7, y: -1.016, z: 0.6399989}
+  m_LocalPosition: {x: -3.7, y: -1.016, z: 0.080001354}
   m_LocalScale: {x: 7.5690002, y: 0.025465101, z: 7.564}
   m_Children: []
   m_Father: {fileID: 291865083}
@@ -3369,7 +3389,7 @@ MonoBehaviour:
   projectionLayers:
   - {fileID: 1595154473}
   - {fileID: 1595154472}
-  separation: 0.04229017
+  separation: 0.0655
   convergence: 0.011
   originalProjection1:
     e00: 0
