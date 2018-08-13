@@ -8,6 +8,8 @@ public class GravityWell : MonoBehaviour {
     public Vector3 force;
     public float timeSpawned;
     public float xDiff, yDiff, zDiff;
+    public int ballNumber = 0;
+    public bool highlightedBall = false;
 
     private Vector3 displacementFromTopJoint;
     private SphereCollider myCollider;
@@ -17,6 +19,9 @@ public class GravityWell : MonoBehaviour {
     private float KeyInputDelayTimer;
     private float normalizedGain;
     private int xSign, ySign, zSign;
+    private Color originalColor;
+    private Renderer ballRenderer;
+
 
     // Use this for initialization
     void Start () {
@@ -24,7 +29,10 @@ public class GravityWell : MonoBehaviour {
         normalizedGain = gain/0.01f;
         topJoint = GameObject.Find("Top").transform;
         gravitySpawnerScript = GameObject.Find("GravityWellSpawner").GetComponent<GravityWellSpawner>();
+
         timeSpawned = Time.time;
+        ballRenderer = GetComponent<Renderer>();
+        originalColor = new Color(108/255f, 104/255f, 159/255f);
 	}
 
     // Update is called once per frame
@@ -57,6 +65,27 @@ public class GravityWell : MonoBehaviour {
 
         if (other.gameObject.tag == "Player") { 
             snap = true;
+        }
+        if (highlightedBall == true)
+        {
+            highlightedBall = false;
+            ballRenderer.material.color = originalColor;
+            gravitySpawnerScript.HighlightRandomBall();
+            if (!GameControl.instance.gameStart)
+            {
+                GameControl.instance.gameCountdown = true;
+            }
+            else
+            {
+                gravitySpawnerScript.IncreaseScore();
+            }
+        }
+        else
+        {
+            if (GameControl.instance.gameStart)
+            {
+                gravitySpawnerScript.DecreaseScore();
+            }
         }
     }
     private void OnTriggerExit(Collider other)

@@ -58,9 +58,9 @@ public class FPScounter : MonoBehaviour
 
     void OnGUI()
     {
-        GUI.Box(new Rect(Screen.width - 160, 10, 150, 40), fps.ToString("f2"));
-        GUI.Box(new Rect(Screen.width - 160, 30, 150, 40), "Sep: " + userCamera.separation.ToString("f5"));
-        GUI.Box(new Rect(Screen.width - 160, 50, 150, 40), "Con: " + userCamera.convergence.ToString("f5"));
-        GUI.Box(new Rect(Screen.width - 160, 70, 150, 40), "Fov: " + userCamera.fieldOfView.ToString("f5"));
+        GUI.Box(new Rect(Screen.width - 160, 10, 110, 20), fps.ToString("f2"));
+        GUI.Box(new Rect(Screen.width - 160, 30, 110, 20), "Sep: " + userCamera.separation.ToString("f5"));
+        GUI.Box(new Rect(Screen.width - 160, 50, 110, 20), "Con: " + userCamera.convergence.ToString("f5"));
+        GUI.Box(new Rect(Screen.width - 160, 70, 110, 20), "Fov: " + userCamera.fieldOfView.ToString("f5"));
     }
 }
