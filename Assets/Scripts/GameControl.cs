@@ -26,6 +26,7 @@ public class GameControl : MonoBehaviour
     public double spawnNumber;
     public double cognitiveLoading;
     public double sceneNumber;
+    public double ARVR;
 
     private Transform topTransform;
     private Transform bottomTransform;
@@ -51,6 +52,7 @@ public class GameControl : MonoBehaviour
             {
                 spawnNumber = ReadSpawnNumber();
                 cognitiveLoading = ReadCognitiveLoading();
+                ARVR = ReadARVR();
             }
         }
         else if (instance != this) //If the game object finds that instance is already on another game object, then this destroys itself as it's not needed
@@ -113,7 +115,7 @@ public class GameControl : MonoBehaviour
                     if (!paramsInit)
                     {
                         paramsInit = true;
-                        MatlabServer.instance.parameters = sceneNumber * 100 + spawnNumber * 10 + cognitiveLoading;
+                        MatlabServer.instance.parameters = sceneNumber * 1000 + spawnNumber * 100 + ARVR * 10 + cognitiveLoading;
                     }
 
                     timer -= Time.deltaTime;
@@ -189,6 +191,21 @@ public class GameControl : MonoBehaviour
         try
         {
             text = System.IO.File.ReadAllText("CognitiveLoading.txt");
+            Debug.Log(text);
+        }
+        catch
+        {
+            text = "-1";
+        }
+        return double.Parse(text);
+    }
+
+    private double ReadARVR()
+    {
+        string text;
+        try
+        {
+            text = System.IO.File.ReadAllText("ARVR.txt");
             Debug.Log(text);
         }
         catch

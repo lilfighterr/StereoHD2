@@ -27,7 +27,7 @@ public class BallDrop : MonoBehaviour {
             {
                 GameControl.instance.gameStart = true;
                 GameControl.instance.gameStartDouble = 1;
-                MatlabServer.instance.parameters = GameControl.instance.sceneNumber * 100 + GameControl.instance.spawnNumber * 10 + GameControl.instance.cognitiveLoading;
+                MatlabServer.instance.parameters = GameControl.instance.sceneNumber * 1000 + GameControl.instance.spawnNumber * 100 + GameControl.instance.ARVR * 10 + GameControl.instance.cognitiveLoading;
             }
             if (!GameControl.instance.gameOver) //Cant drop/pickup if game over
             {

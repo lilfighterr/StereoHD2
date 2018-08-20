@@ -60,7 +60,7 @@ public class HoopScore : MonoBehaviour {
                 table.Add(ballScript.xDir);
                 table.Add(ballScript.yDir);
                 table.Add(ballScript.zDir);
-                SaveToExcel.instance.Save(table, 7, "Ball" + GameControl.instance.spawnNumber + "_CL" + GameControl.instance.cognitiveLoading + "_Sc" + score + "_");
+                SaveToExcel.instance.Save(table, 7, "Ball" + GameControl.instance.spawnNumber + "_AV" + GameControl.instance.ARVR + "_CL" + GameControl.instance.cognitiveLoading + "_Sc" + score);
                 table.Clear();
             }
         }

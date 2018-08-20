@@ -132,7 +132,7 @@ public class GravityWell : MonoBehaviour {
                 table.Add(pointSnapperScript.yDir.GetRange(pointSnapperScript.yDir.Count - pointSnapperListLength, pointSnapperListLength));
                 table.Add(pointSnapperScript.zDir.GetRange(pointSnapperScript.zDir.Count - pointSnapperListLength, pointSnapperListLength));
                 pointSnapperScript.listLength = 0;
-                SaveToExcel.instance.Save(table, 6, "Snapping" + GameControl.instance.spawnNumber + "_CL" + GameControl.instance.cognitiveLoading + "_Sc" + gravitySpawnerScript.hits + "_");
+                SaveToExcel.instance.Save(table, 6, "Snapping" + GameControl.instance.spawnNumber + "_AV" + GameControl.instance.ARVR + "_CL" + GameControl.instance.cognitiveLoading + "_Sc" + gravitySpawnerScript.hits);
             }
         }
     }
