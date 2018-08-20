@@ -198,6 +198,7 @@ namespace RoomAliveToolkit
             depthMeshes = GameObject.FindObjectsOfType<RATDepthMesh>();
 
             initialized = true;
+            separation = ReadSeparation();
         }
 
         public void FixedUpdate()
@@ -430,6 +431,13 @@ namespace RoomAliveToolkit
                 p2 = originalProjection1;
                 p2.m02 = convergence * -1;
             }
+        }
+
+        private float ReadSeparation()
+        {
+            string text = System.IO.File.ReadAllText("EyeSeparation.txt");
+            
+            return float.Parse(text);
         }
     }
 

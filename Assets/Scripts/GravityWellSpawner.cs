@@ -8,6 +8,10 @@ public class GravityWellSpawner : MonoBehaviour {
     public GameObject spawnBoxArea;
     public TextMesh scoreText;
     public int initialSpawnCount = 20;
+    public double timeLastBallLeft = 0;
+    public int score = 0;
+    public int hits = 0;
+    public int misses = 0;
 
     private Vector3 boxSize;
     private Vector3 boxCenter;
@@ -21,13 +25,22 @@ public class GravityWellSpawner : MonoBehaviour {
     private Renderer rend;
     private Color originalColor;
     private List<int> randomizeList = new List<int>();
-    private int score = 0;
-    private int hits = 0;
-    private int misses = 0;
+    private List<double> doublesRandomizedList = new List<double>();
+    private List<double> xSpawnList = new List<double>();
+    private List<double> ySpawnList = new List<double>();
+    private List<double> zSpawnList = new List<double>();
+    private List<List<double>> table = new List<List<double>>();
 
+    private string[][] loadedData;
+    private Vector3 pos;
+    private int spawnData = 0;
+    private int pointIndex = 0;
 
     // Use this for initialization
     void Start () {
+        // Change scene number on Game Control
+        GameControl.instance.sceneNumber = 2;
+
         // Initialize array of balls
         spawnedBalls = new GameObject[initialSpawnCount];
 
@@ -45,14 +58,26 @@ public class GravityWellSpawner : MonoBehaviour {
         colliderRadius = gravityWellPrefab.GetComponent<SphereCollider>().radius;
         colliderScale = gravityWellPrefab.GetComponent<SphereCollider>().transform.lossyScale.x;
 
+        if (GameControl.instance.useData)
+        {
+            LoadData(); // Use data from CSV
+        }
+
         // Spawn # of balls cased on spawn count
         for (int i = 1; i < initialSpawnCount; i++)
         {
             SpawnGravityWell(i);
-            randomizeList.Add(i);
+            if (GameControl.instance.useData)
+            {
+                randomizeList.Add(int.Parse(loadedData[3][i-1]));
+            }
+            else
+            {
+                randomizeList.Add(i);
+            }
         }
 
-        ListShuffle.Shuffle<int>(randomizeList); //Shuffle List
+        if (!GameControl.instance.useData) ListShuffle.Shuffle<int>(randomizeList); //Shuffle List
     }
 	
 	// Update is called once per frame
@@ -63,25 +88,46 @@ public class GravityWellSpawner : MonoBehaviour {
             HighlightRandomBall();
             //SpawnGravityWell();
         }
+        if (Input.GetKey(KeyCode.G) && KeyInputDelayTimer + 0.1f < Time.time) // Press G to generate spawn points
+        {
+            KeyInputDelayTimer = Time.time;
+            GeneratePositionSets();
+        }
     }
 
     public void SpawnGravityWell(int index) // Spawn gravity well
     {
-        // Randomize location within box
-        xSpawn = Random.Range(boxCenter.x - boxSize.x / 2, boxCenter.x + boxSize.x / 2);
-        ySpawn = Random.Range(boxCenter.y - boxSize.y / 2, boxCenter.y + boxSize.y / 2);
-        zSpawn = Random.Range(boxCenter.z - boxSize.z / 2, boxCenter.z + boxSize.z / 2);
-        Vector3 pos = new Vector3(xSpawn, ySpawn, zSpawn);
-
-        // Check if spawn point will collide with other points
-        while (Physics.CheckSphere(pos, colliderRadius * colliderScale, layerMask)) // Will only apply to Layer specified in layer mask
+        if (GameControl.instance.useData)
         {
-            // Randomize again if it will collide
+            pos = new Vector3(float.Parse(loadedData[0][pointIndex]), float.Parse(loadedData[1][pointIndex]), float.Parse(loadedData[2][pointIndex]));
+            pointIndex++;
+        }
+        else
+        {
+            // Randomize location within box
             xSpawn = Random.Range(boxCenter.x - boxSize.x / 2, boxCenter.x + boxSize.x / 2);
             ySpawn = Random.Range(boxCenter.y - boxSize.y / 2, boxCenter.y + boxSize.y / 2);
             zSpawn = Random.Range(boxCenter.z - boxSize.z / 2, boxCenter.z + boxSize.z / 2);
             pos = new Vector3(xSpawn, ySpawn, zSpawn);
+
+            // Check if spawn point will collide with other points
+            while (Physics.CheckSphere(pos, colliderRadius * colliderScale, layerMask)) // Will only apply to Layer specified in layer mask
+            {
+                // Randomize again if it will collide
+                xSpawn = Random.Range(boxCenter.x - boxSize.x / 2, boxCenter.x + boxSize.x / 2);
+                ySpawn = Random.Range(boxCenter.y - boxSize.y / 2, boxCenter.y + boxSize.y / 2);
+                zSpawn = Random.Range(boxCenter.z - boxSize.z / 2, boxCenter.z + boxSize.z / 2);
+                pos = new Vector3(xSpawn, ySpawn, zSpawn);
+            }
+
+            //Save point locations
+            xSpawnList.Add(xSpawn);
+            ySpawnList.Add(ySpawn);
+            zSpawnList.Add(zSpawn);
         }
+       
+
+        
 
         // Spawn point
         spawnedBalls[index] =Instantiate(gravityWellPrefab, pos, Quaternion.identity);
@@ -92,7 +138,7 @@ public class GravityWellSpawner : MonoBehaviour {
         xSpawn = Random.Range(boxCenter.x - boxSize.x / 2, boxCenter.x + boxSize.x / 2);
         ySpawn = Random.Range(boxCenter.y - boxSize.y / 2, boxCenter.y + boxSize.y / 2);
         zSpawn = Random.Range(boxCenter.z - boxSize.z / 2, boxCenter.z + boxSize.z / 2);
-        Vector3 pos = new Vector3(xSpawn, ySpawn, zSpawn);
+        pos = new Vector3(xSpawn, ySpawn, zSpawn);
         return pos;
     }
 
@@ -119,5 +165,26 @@ public class GravityWellSpawner : MonoBehaviour {
         misses++;
         score = hits - misses;
         scoreText.text = " Score\n" + score.ToString();
+    }
+
+    private void GeneratePositionSets() // Generate a CSV file of spawn locations. First row is X, 2nd is Y, 3rd is Z. Each column corresponds to a point in space
+    {
+        table.Add(xSpawnList);
+        table.Add(ySpawnList);
+        table.Add(zSpawnList);
+        randomizeList.ForEach(i => doublesRandomizedList.Add(i));
+        table.Add(doublesRandomizedList);
+        SaveToExcel.instance.Save(table, 4, "Gravity_Spawn");
+        table.Clear();
+        xSpawnList.Clear();
+        ySpawnList.Clear();
+        zSpawnList.Clear();
+        Debug.Log("Generated positions!");
+    }
+
+    private void LoadData()
+    {
+        loadedData = SaveToExcel.instance.Load("SpawnGeneration/Gravity_Spawn_" + GameControl.instance.spawnNumber + ".csv");
+        Debug.Log("Loaded Data");
     }
 }

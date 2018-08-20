@@ -46,7 +46,7 @@ public class HoleScore : MonoBehaviour
                 table.Add(yDir);
                 table.Add(zDir);
 
-                SaveToExcel.instance.Save(table, 7, "Hole");
+                SaveToExcel.instance.Save(table, 8, "Hole" + GameControl.instance.spawnNumber + "_CL" + GameControl.instance.cognitiveLoading + "_");
             }
         }
     }

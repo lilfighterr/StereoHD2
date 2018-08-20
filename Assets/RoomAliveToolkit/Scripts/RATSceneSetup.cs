@@ -31,6 +31,7 @@ namespace RoomAliveToolkit
             else return false;
         }
 
+      
         void Start()
         {
             calibrationData = GetComponent<RATCalibrationData>();

@@ -26,7 +26,7 @@ public class BallPusher : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        time.Add(Time.time);
+        time.Add(GameControl.instance.timeElapsed);
         xDir.Add(transform.position.x);
         yDir.Add(transform.position.y);
         zDir.Add(transform.position.z);

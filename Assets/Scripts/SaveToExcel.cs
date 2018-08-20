@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Text;
 using System.IO;
 using System;
+using System.Linq;
 
 public class SaveToExcel : MonoBehaviour
 {
@@ -77,6 +78,12 @@ public class SaveToExcel : MonoBehaviour
         outStream.WriteLine(sb);
         outStream.Close();
 
+    }
+
+    public string[][] Load(string filePath)
+    {
+        string[][] loadedData = File.ReadLines(filePath).Select(x => x.Split(',')).ToArray();     
+        return loadedData;
     }
 
     // Following method is used to retrive the relative path as device platform

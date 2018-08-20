@@ -21,7 +21,16 @@ public class GravityWell : MonoBehaviour {
     private int xSign, ySign, zSign;
     private Color originalColor;
     private Renderer ballRenderer;
-
+    private List<List<double>> table = new List<List<double>>();
+    private List<double> timeDurationList = new List<double>();
+    private List<double> gravityWellPosition = new List<double>();
+    private double timeEntered;
+    private double timeLeft;
+    private double timeDuration;
+    private PointSnapper pointSnapperScript;
+    private int pointSnapperListLength;
+    private bool wasHighlightedBall = false;
+    
 
     // Use this for initialization
     void Start () {
@@ -33,7 +42,10 @@ public class GravityWell : MonoBehaviour {
         timeSpawned = Time.time;
         ballRenderer = GetComponent<Renderer>();
         originalColor = new Color(108/255f, 104/255f, 159/255f);
-	}
+        gravityWellPosition.Add(transform.position.x);
+        gravityWellPosition.Add(transform.position.y);
+        gravityWellPosition.Add(transform.position.z);
+    }
 
     // Update is called once per frame
     void Update() {
@@ -69,22 +81,26 @@ public class GravityWell : MonoBehaviour {
         if (highlightedBall == true)
         {
             highlightedBall = false;
+            wasHighlightedBall = true;
             ballRenderer.material.color = originalColor;
             gravitySpawnerScript.HighlightRandomBall();
-            if (!GameControl.instance.gameStart)
+            if (!GameControl.instance.gameStart) // If game has not started, start game (for initial point)
             {
                 GameControl.instance.gameCountdown = true;
             }
-            else
+            else // Increase score after game started
             {
                 gravitySpawnerScript.IncreaseScore();
+                timeEntered = GameControl.instance.timeElapsed; // Time user entered the point
+                timeDuration = timeEntered - gravitySpawnerScript.timeLastBallLeft;
+                timeDurationList.Add(timeDuration);
             }
         }
         else
         {
             if (GameControl.instance.gameStart)
             {
-                gravitySpawnerScript.DecreaseScore();
+                gravitySpawnerScript.DecreaseScore();       
             }
         }
     }
@@ -92,10 +108,32 @@ public class GravityWell : MonoBehaviour {
     {
         if (other.gameObject.tag == "Player")
         {
+            pointSnapperScript = other.GetComponent<PointSnapper>();
             snap = false;
             MatlabServer.instance.xFTop = 0;
             MatlabServer.instance.yFTop = 0;
             MatlabServer.instance.zFTop = 0;
+            gravitySpawnerScript.timeLastBallLeft = GameControl.instance.timeElapsed; // Time user exited the point
+
+            if (GameControl.instance.gameStart && wasHighlightedBall)
+            {
+                wasHighlightedBall = false;
+                pointSnapperListLength = pointSnapperScript.listLength;
+
+                timeDurationList.Add(gravitySpawnerScript.score);
+                timeDurationList.Add(gravitySpawnerScript.hits);
+                timeDurationList.Add(gravitySpawnerScript.misses);
+                table.Add(timeDurationList); // Contains timeduration, score, hits, misses
+                table.Add(gravityWellPosition); // contains x,y,z of current gravity well
+
+                // Next rows add: time, x, y, z trajectories
+                table.Add(pointSnapperScript.time.GetRange(pointSnapperScript.time.Count - pointSnapperListLength, pointSnapperListLength));
+                table.Add(pointSnapperScript.xDir.GetRange(pointSnapperScript.xDir.Count - pointSnapperListLength, pointSnapperListLength));
+                table.Add(pointSnapperScript.yDir.GetRange(pointSnapperScript.yDir.Count - pointSnapperListLength, pointSnapperListLength));
+                table.Add(pointSnapperScript.zDir.GetRange(pointSnapperScript.zDir.Count - pointSnapperListLength, pointSnapperListLength));
+                pointSnapperScript.listLength = 0;
+                SaveToExcel.instance.Save(table, 6, "Snapping" + GameControl.instance.spawnNumber + "_CL" + GameControl.instance.cognitiveLoading + "_Sc" + gravitySpawnerScript.hits + "_");
+            }
         }
     }
 }

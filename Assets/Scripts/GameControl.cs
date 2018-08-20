@@ -11,13 +11,21 @@ public class GameControl : MonoBehaviour
     public GameObject effectorBottom;
     public GameObject Ball;
     public TextMesh countdownText;
+    public GameObject blinker;
     public float endEffectorLength;
-    public SceneName sceneIndex;
+    //public SceneName sceneIndex;
     public bool gameOver = false;
     public bool gameStart = false;
     public bool gameCountdown = false;
     public float duration = 60;
     public float timeElapsed = 0;
+    public float blinkTimerOn = 2f;
+    public float blinkTimerOff = 2f;
+    public bool useData = false;
+    public double gameStartDouble = 0;
+    public double spawnNumber;
+    public double cognitiveLoading;
+    public double sceneNumber;
 
     private Transform topTransform;
     private Transform bottomTransform;
@@ -28,6 +36,8 @@ public class GameControl : MonoBehaviour
     private float timeLeft = 4.5f; //For 3s countdown
     private float viewedTime;
     private float timer;
+    private float blinkerTime;
+    private bool paramsInit = false;
 
     // Use this for initialization
     void Awake()
@@ -36,7 +46,12 @@ public class GameControl : MonoBehaviour
         if (instance == null) //If no game control found
         {
             instance = this; //Then this is the instance of the game control
-            sceneIndex = (SceneName)SceneManager.GetActiveScene().buildIndex;
+            //sceneIndex = (SceneName)SceneManager.GetActiveScene().buildIndex;
+            if (useData)
+            {
+                spawnNumber = ReadSpawnNumber();
+                cognitiveLoading = ReadCognitiveLoading();
+            }
         }
         else if (instance != this) //If the game object finds that instance is already on another game object, then this destroys itself as it's not needed
         {
@@ -60,7 +75,7 @@ public class GameControl : MonoBehaviour
         if (Input.GetKey(KeyCode.Alpha1) && KeyInputDelayTimer + 0.1f < Time.time)
         {
             KeyInputDelayTimer = Time.time;
-            LoadScene("Main");
+            LoadScene("Catcher");
         }
         if (Input.GetKey(KeyCode.Alpha2) && KeyInputDelayTimer + 0.1f < Time.time)
         {
@@ -94,6 +109,13 @@ public class GameControl : MonoBehaviour
                 {
                     countdownText.text = "GO!";
                     gameStart = true;
+                    gameStartDouble = 1;
+                    if (!paramsInit)
+                    {
+                        paramsInit = true;
+                        MatlabServer.instance.parameters = sceneNumber * 100 + spawnNumber * 10 + cognitiveLoading;
+                    }
+
                     timer -= Time.deltaTime;
                 }
             }
@@ -104,6 +126,19 @@ public class GameControl : MonoBehaviour
                     timeElapsed += Time.deltaTime;
                     timer -= Time.deltaTime;
                     countdownText.text = timer.ToString("F0");
+
+                    blinkerTime -= Time.deltaTime; //For blinker
+                    if (blinkerTime < 0 && blinker.activeSelf)
+                    {
+                        blinker.SetActive(false);
+                        blinkerTime = blinkTimerOff;
+                    }
+                    else if (blinkerTime < 0 && !blinker.activeSelf)
+                    {
+                        blinker.SetActive(true);
+                        blinkerTime = blinkTimerOn;
+                    }
+
                     gameOver = TimerCheckGameEnd(timer);
                 }
             }
@@ -111,13 +146,14 @@ public class GameControl : MonoBehaviour
         else
         {
             gameStart = false;
+            gameStartDouble = 0;
         }
     }
 
     private void LoadScene(string sceneName)
     {
         Debug.Log("Load Scene: " + sceneName);
-        MatlabServer.instance.StopThread();
+        //MatlabServer.instance.StopThread();
         SceneManager.LoadScene(sceneName);
     }
 
@@ -138,5 +174,27 @@ public class GameControl : MonoBehaviour
     {
         MatlabServer.instance.StopThread();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); //Reload current scene to restart
+    }
+
+    private double ReadSpawnNumber()
+    {
+        string text = System.IO.File.ReadAllText("SpawnNumber.txt");
+
+        return double.Parse(text);
+    }
+
+    private double ReadCognitiveLoading()
+    {
+        string text;
+        try
+        {
+            text = System.IO.File.ReadAllText("CognitiveLoading.txt");
+            Debug.Log(text);
+        }
+        catch
+        {
+            text = "-1";
+        }
+        return double.Parse(text);
     }
 }

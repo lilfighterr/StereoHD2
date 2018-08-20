@@ -19,6 +19,7 @@ public class MatlabServer : MonoBehaviour {
     public float collisionStatus = 0;
     public float forceFeedback = 0;
     public float [] recvBuffer;
+    public double parameters;
 
     [ReadOnly] public bool serverRunning = false;
     [ReadOnly] public string ipAddress = "142.244.62.103"; //This comp: 142.244.63.45, Localhost: 127.0.0.1   
@@ -28,7 +29,7 @@ public class MatlabServer : MonoBehaviour {
     private bool stop = false;
     private bool threadRunning = false;
     private int recvSize = 48; //Amount of information in bytes to receive from Simulink. Double is 8 bytes.
-    private int sendSize = 48; //Amount of information in bytes to send to Simulink.
+    private int sendSize = 64; //Amount of information in bytes to send to Simulink.
 
 
     // Use this for initialization
@@ -38,6 +39,8 @@ public class MatlabServer : MonoBehaviour {
         if (instance == null) //If no game control found
         {
             instance = this; //Then this is the instance of the game control
+            DontDestroyOnLoad(this.gameObject);
+            Debug.Log("Awake: " + this.gameObject);
         }
         else if (instance != this) //If the game object finds that instance is already on another game object, then this destroys itself as it's not needed
         {
@@ -64,6 +67,7 @@ public class MatlabServer : MonoBehaviour {
     public void StartThread()
     {
         thread = new Thread(new ThreadStart(ThreadMethod));
+        Debug.Log("Thread Started");
         thread.Start();
     }
 
@@ -77,11 +81,13 @@ public class MatlabServer : MonoBehaviour {
         {
             thread.Abort();
         }
+        Debug.Log("Thread Stopped");
         newsock.Close();
     }
 
     private void ThreadMethod()
     {
+        Debug.Log("Thread Running");
         threadRunning = true;
         int recv;
         byte[] dataRecv = new byte[recvSize];  //Data Received from Simulink
@@ -130,7 +136,9 @@ public class MatlabServer : MonoBehaviour {
             //Debug.Log(recvBuffer[0] + " " + recvBuffer[1] + " " + recvBuffer[2] + " " + recvBuffer[3] + " " + recvBuffer[4] + " " + recvBuffer[5]); //Display X/Y Position
 
             //Concatenate Collision Status, ForceFeedbackStatus, xForce, yForce. 
-            dataSendLINQ = (BitConverter.GetBytes((double)xFTop)).Concat(BitConverter.GetBytes((double)yFTop)).Concat(BitConverter.GetBytes((double)zFTop)).Concat(BitConverter.GetBytes((double)xFBot)).Concat(BitConverter.GetBytes((double)yFBot)).Concat(BitConverter.GetBytes((double)zFBot));
+            dataSendLINQ = (BitConverter.GetBytes((double)xFTop)).Concat(BitConverter.GetBytes((double)yFTop)).Concat(BitConverter.GetBytes((double)zFTop))
+                .Concat(BitConverter.GetBytes((double)xFBot)).Concat(BitConverter.GetBytes((double)yFBot)).Concat(BitConverter.GetBytes((double)zFBot))
+                .Concat(BitConverter.GetBytes(GameControl.instance.gameStartDouble)).Concat(BitConverter.GetBytes(parameters));
             dataSend = dataSendLINQ.ToArray(); //Convert to byte Array from IEnumerable byte Array
 
             //Debug.Log("X_f: " + xForce + " Y_f: " + yForce); //xForce, yForce
