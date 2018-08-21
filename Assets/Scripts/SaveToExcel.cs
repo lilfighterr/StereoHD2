@@ -90,13 +90,13 @@ public class SaveToExcel : MonoBehaviour
     private string getPath(string name)
     {
 #if UNITY_EDITOR
-        return Application.dataPath + "/CSV/" + name +"_" + saveNum + ".csv";
+        return Application.dataPath + "/../CSV/" + name +"_" + saveNum + ".csv";
 #elif UNITY_ANDROID
             return Application.persistentDataPath+ name +"_" + saveNum + ".csv";
 #elif UNITY_IPHONE
             return Application.persistentDataPath+"/"+ name +"_" + saveNum + ".csv";
 #else
-            return Application.dataPath +"/CSV/"+ name +"_" + saveNum + ".csv";
+            return Application.dataPath +"/../CSV/"+ name +"_" + saveNum + ".csv";
 #endif
     }
 

@@ -74,7 +74,7 @@ public class GameControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.Alpha1) && KeyInputDelayTimer + 0.1f < Time.time)
+        /*if (Input.GetKey(KeyCode.Alpha1) && KeyInputDelayTimer + 0.1f < Time.time) // Breaks kinect connection
         {
             KeyInputDelayTimer = Time.time;
             LoadScene("Catcher");
@@ -88,6 +88,12 @@ public class GameControl : MonoBehaviour
         {
             KeyInputDelayTimer = Time.time;
             LoadScene("Snapping");
+        }*/
+
+        if (Input.GetKey(KeyCode.Escape) && KeyInputDelayTimer + 0.1f < Time.time)
+        {
+            KeyInputDelayTimer = Time.time;
+            if (!Application.isEditor) System.Diagnostics.Process.GetCurrentProcess().Kill(); // Kill process to instantly close window Workaround for crashing Application.Quit()
         }
 
         if (!gameOver)
