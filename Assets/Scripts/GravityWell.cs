@@ -83,10 +83,12 @@ public class GravityWell : MonoBehaviour {
             highlightedBall = false;
             wasHighlightedBall = true;
             ballRenderer.material.color = originalColor;
-            gravitySpawnerScript.HighlightRandomBall();
+            if (!GameControl.instance.gameOver) gravitySpawnerScript.HighlightRandomBall(); // Stop highlighting if gameover
             if (!GameControl.instance.gameStart) // If game has not started, start game (for initial point)
             {
                 GameControl.instance.gameCountdown = true;
+                GameObject cylinder = GameObject.Find("CalibrationCylinder");
+                cylinder.SetActive(false);
             }
             else // Increase score after game started
             {
@@ -133,6 +135,8 @@ public class GravityWell : MonoBehaviour {
                 table.Add(pointSnapperScript.zDir.GetRange(pointSnapperScript.zDir.Count - pointSnapperListLength, pointSnapperListLength));
                 pointSnapperScript.listLength = 0;
                 SaveToExcel.instance.Save(table, 6, "Snapping" + GameControl.instance.spawnNumber + "_AV" + GameControl.instance.ARVR + "_CL" + GameControl.instance.cognitiveLoading + "_Sc" + gravitySpawnerScript.hits);
+                timeDurationList.Clear();
+                table.Clear();
             }
         }
     }

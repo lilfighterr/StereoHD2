@@ -20,7 +20,7 @@ public class BallDrop : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKey(KeyCode.Space) && KeyInputDelayTimer + 0.1f < Time.time) // Drop ball
+        if (Input.GetKey(KeyCode.Space) && KeyInputDelayTimer + 0.2f < Time.time) // Drop ball
         {
             KeyInputDelayTimer = Time.time;
             if (!GameControl.instance.gameStart) //First drop starts the timer

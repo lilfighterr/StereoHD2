@@ -206,6 +206,7 @@ MonoBehaviour:
   spawnNumber: 1
   cognitiveLoading: 0
   sceneNumber: 0
+  ARVR: 0
 --- !u!4 &15057084
 Transform:
   m_ObjectHideFlags: 0
@@ -2562,11 +2563,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4301572533961260, guid: cfa43c1d529e1b34ebe25a7456647332, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -0.1788
+      value: 0.9006
       objectReference: {fileID: 0}
     - target: {fileID: 4301572533961260, guid: cfa43c1d529e1b34ebe25a7456647332, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 0.0486
+      value: 0.0218
       objectReference: {fileID: 0}
     - target: {fileID: 4301572533961260, guid: cfa43c1d529e1b34ebe25a7456647332, type: 2}
       propertyPath: m_LocalPosition.z

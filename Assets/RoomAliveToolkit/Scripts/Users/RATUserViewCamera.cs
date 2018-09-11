@@ -317,6 +317,8 @@ namespace RoomAliveToolkit
             cam1.Render();
             cam1.clearFlags = CameraClearFlags.Nothing;
 
+            //Debug.Log("Left: " + ratUser.getLeftEyePos() + "Right: " + ratUser.getRightEyePos());
+
             foreach (RATProjectionPass layer in projectionLayers)
             {
                 if (layer.renderUserView && layer.userViewShader != null && layer.enabled)

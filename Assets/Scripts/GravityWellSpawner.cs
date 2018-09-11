@@ -25,6 +25,7 @@ public class GravityWellSpawner : MonoBehaviour {
     private Renderer rend;
     private Color originalColor;
     private List<int> randomizeList = new List<int>();
+    private List<int> backupRandomizedList = new List<int>();
     private List<double> doublesRandomizedList = new List<double>();
     private List<double> xSpawnList = new List<double>();
     private List<double> ySpawnList = new List<double>();
@@ -78,6 +79,8 @@ public class GravityWellSpawner : MonoBehaviour {
         }
 
         if (!GameControl.instance.useData) ListShuffle.Shuffle<int>(randomizeList); //Shuffle List
+        backupRandomizedList = new List<int>(randomizeList); // Must make new instance or else backup will just reference randomizeList
+        Debug.Log(backupRandomizedList.Count);
     }
 	
 	// Update is called once per frame
@@ -145,11 +148,12 @@ public class GravityWellSpawner : MonoBehaviour {
     // Highlighting a random ball
     public void HighlightRandomBall()
     {
-        if (randomizeList.Count != 0)
+        spawnedBalls[randomizeList[0]].GetComponent<Renderer>().material.color = Color.yellow; // Make it color yellow
+        spawnedBalls[randomizeList[0]].GetComponent<GravityWell>().highlightedBall = true; // Set its status to highlighted
+        randomizeList.RemoveAt(0);
+        if (randomizeList.Count == 0) // If list went empty
         {
-            spawnedBalls[randomizeList[0]].GetComponent<Renderer>().material.color = Color.yellow; // Make it color yellow
-            spawnedBalls[randomizeList[0]].GetComponent<GravityWell>().highlightedBall = true; // Set its status to highlighted
-            randomizeList.RemoveAt(0);
+            randomizeList = new List<int>(backupRandomizedList); // Restart from the beginning
         }
     }
 

@@ -54,6 +54,39 @@ namespace RoomAliveToolkit
                 return Vector3.zero;
         }
 
+        public Vector3 getLeftEyePos()
+        {
+            if (IsReady())
+            {
+                Vector3 pos = GetSkeleton().facePositions3D[(int)FaceType.EyeLeft]; // this is reported in the coordinate system of the skeleton provider
+                return skeletonProvider.transform.localToWorldMatrix.MultiplyPoint(pos); //this moves it to world coordinates
+            }
+            else
+                return Vector3.zero;
+        }
+
+        public Vector3 getRightEyePos()
+        {
+            if (IsReady())
+            {
+                Vector3 pos = GetSkeleton().facePositions3D[(int)FaceType.EyeRight]; // this is reported in the coordinate system of the skeleton provider
+                return skeletonProvider.transform.localToWorldMatrix.MultiplyPoint(pos); //this moves it to world coordinates
+            }
+            else
+                return Vector3.zero;
+        }
+
+        public Vector3 faceOrientation()
+        {
+            if (IsReady())
+            {
+                Vector3 pos = GetSkeleton().faceOrientationYPR; // this is reported in the coordinate system of the skeleton provider
+                return pos; //skeletonProvider.transform.localToWorldMatrix.MultiplyPoint(pos); //this moves it to world coordinates
+            }
+            else
+                return Vector3.zero;
+        }
+
         public void Update()
         {
 
