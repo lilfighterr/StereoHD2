@@ -34,55 +34,46 @@ public class GravityWell : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        myCollider = GetComponent<SphereCollider>();
-        normalizedGain = gain/0.01f;
-        topJoint = GameObject.Find("Top").transform;
-        gravitySpawnerScript = GameObject.Find("GravityWellSpawner").GetComponent<GravityWellSpawner>();
+        myCollider = GetComponent<SphereCollider>(); // Get collider of this object
+        normalizedGain = gain/0.01f; // 
+        topJoint = GameObject.Find("Top").transform; // Get the top part of the end effector
+        gravitySpawnerScript = GameObject.Find("GravityWellSpawner").GetComponent<GravityWellSpawner>(); // Get access to the spawner script
 
-        timeSpawned = Time.time;
-        ballRenderer = GetComponent<Renderer>();
-        originalColor = new Color(108/255f, 104/255f, 159/255f);
-        gravityWellPosition.Add(transform.position.x);
+        timeSpawned = Time.time; // Time this object was spawned
+        ballRenderer = GetComponent<Renderer>(); // Get the renderer to control color for later
+        originalColor = new Color(108/255f, 104/255f, 159/255f); // Unhighlighted color
+        gravityWellPosition.Add(transform.position.x); // Save the x y z position in a table
         gravityWellPosition.Add(transform.position.y);
         gravityWellPosition.Add(transform.position.z);
     }
 
     // Update is called once per frame
     void Update() {
+        // Checks how close the end-effector is from it
         xDiff = topJoint.position.x - transform.position.x;
         yDiff = topJoint.position.y - transform.position.y;
         zDiff = topJoint.position.z - transform.position.z;
-
-        xSign =  (xDiff >= 0) ? 1 : -1;
-        ySign = (yDiff >= 0) ? 1 : -1;
-        zSign = (zDiff >= 0) ? 1 : -1;
-
         displacementFromTopJoint = new Vector3(xDiff, yDiff, zDiff);
 
-        /*Mathf.Clamp(Mathf.Abs(xDiff), distanceMinimum, myCollider.radius)*xSign,
-        Mathf.Clamp(Mathf.Abs(yDiff), distanceMinimum, myCollider.radius) * ySign,
-        Mathf.Clamp(Mathf.Abs(zDiff), distanceMinimum, myCollider.radius) * zSign*/
-        if (snap)
+        if (snap) // If the end-effector hits the object, send forces to snap
         {
             MatlabServer.instance.xFTop = -normalizedGain * displacementFromTopJoint.z;
             MatlabServer.instance.yFTop = normalizedGain * displacementFromTopJoint.x;
             MatlabServer.instance.zFTop = -normalizedGain * displacementFromTopJoint.y;
-
         }
-
     }
 
+    // When end-effector enters the trigger
     private void OnTriggerEnter(Collider other)
     {
-
-        if (other.gameObject.tag == "Player") { 
-            snap = true;
+        if (other.gameObject.tag == "Player") { // If it was the end-effector
+            snap = true; // Turn on snap
         }
-        if (highlightedBall == true)
+        if (highlightedBall == true) // If this is the highlighted ball
         {
-            highlightedBall = false;
-            wasHighlightedBall = true;
-            ballRenderer.material.color = originalColor;
+            highlightedBall = false; // Mark that it's not highlighted anymore
+            wasHighlightedBall = true; // Mark that it was highlighted
+            ballRenderer.material.color = originalColor; // Unhighlight
             if (!GameControl.instance.gameOver) gravitySpawnerScript.HighlightRandomBall(); // Stop highlighting if gameover
             if (!GameControl.instance.gameStart) // If game has not started, start game (for initial point)
             {
@@ -94,37 +85,39 @@ public class GravityWell : MonoBehaviour {
             {
                 gravitySpawnerScript.IncreaseScore();
                 timeEntered = GameControl.instance.timeElapsed; // Time user entered the point
-                timeDuration = timeEntered - gravitySpawnerScript.timeLastBallLeft;
-                timeDurationList.Add(timeDuration);
+                timeDuration = timeEntered - gravitySpawnerScript.timeLastBallLeft; 
+                timeDurationList.Add(timeDuration); // How long it took to reach this point from the previous point
             }
         }
         else
         {
             if (GameControl.instance.gameStart)
-            {
+            { // Decrease score if it was an unhighlighted ball
                 gravitySpawnerScript.DecreaseScore();       
             }
         }
     }
+
+    // When end-effector exits the trigger
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.tag == "Player")
+        if (other.gameObject.tag == "Player") // If it was the end-effector
         {
             pointSnapperScript = other.GetComponent<PointSnapper>();
-            snap = false;
+            snap = false; // Turn off snap and reset forces to 0
             MatlabServer.instance.xFTop = 0;
             MatlabServer.instance.yFTop = 0;
             MatlabServer.instance.zFTop = 0;
             gravitySpawnerScript.timeLastBallLeft = GameControl.instance.timeElapsed; // Time user exited the point
 
             if (GameControl.instance.gameStart && wasHighlightedBall)
-            {
-                wasHighlightedBall = false;
+            { // If it exited a highlighted ball
+                wasHighlightedBall = false; 
                 pointSnapperListLength = pointSnapperScript.listLength;
 
-                timeDurationList.Add(gravitySpawnerScript.score);
-                timeDurationList.Add(gravitySpawnerScript.hits);
-                timeDurationList.Add(gravitySpawnerScript.misses);
+                timeDurationList.Add(gravitySpawnerScript.score); // Add current net score
+                timeDurationList.Add(gravitySpawnerScript.hits); // Add current # of highlighted balls hit 
+                timeDurationList.Add(gravitySpawnerScript.misses); // Add current # of unhighlighted balls hit
                 table.Add(timeDurationList); // Contains timeduration, score, hits, misses
                 table.Add(gravityWellPosition); // contains x,y,z of current gravity well
 

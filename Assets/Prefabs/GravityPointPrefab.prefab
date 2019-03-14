@@ -94,12 +94,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   topJoint: {fileID: 0}
-  gain: 1
+  gain: 0.5
   force: {x: 0, y: 0, z: 0}
   timeSpawned: 0
   xDiff: 0
   yDiff: 0
   zDiff: 0
+  ballNumber: 0
+  highlightedBall: 0
 --- !u!135 &135988480853858598
 SphereCollider:
   m_ObjectHideFlags: 1

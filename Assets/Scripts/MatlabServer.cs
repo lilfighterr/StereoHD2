@@ -22,7 +22,7 @@ public class MatlabServer : MonoBehaviour {
     public double parameters;
 
     [ReadOnly] public bool serverRunning = false;
-    [ReadOnly] public string ipAddress = "142.244.62.103"; //This comp: 142.244.63.45, Localhost: 127.0.0.1   
+    [ReadOnly] public string ipAddress = "142.244.62.103"; //This comp: 142.244.63.103, Localhost: 127.0.0.1   
     [ReadOnly] public int port = 9000; 
     private Thread thread;
     private Socket newsock;

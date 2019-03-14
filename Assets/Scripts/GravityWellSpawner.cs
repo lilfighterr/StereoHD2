@@ -98,7 +98,8 @@ public class GravityWellSpawner : MonoBehaviour {
         }
     }
 
-    public void SpawnGravityWell(int index) // Spawn gravity well
+    // Spawn gravity well
+    public void SpawnGravityWell(int index) 
     {
         if (GameControl.instance.useData)
         {
@@ -122,16 +123,11 @@ public class GravityWellSpawner : MonoBehaviour {
                 zSpawn = Random.Range(boxCenter.z - boxSize.z / 2, boxCenter.z + boxSize.z / 2);
                 pos = new Vector3(xSpawn, ySpawn, zSpawn);
             }
-
             //Save point locations
             xSpawnList.Add(xSpawn);
             ySpawnList.Add(ySpawn);
             zSpawnList.Add(zSpawn);
         }
-       
-
-        
-
         // Spawn point
         spawnedBalls[index] =Instantiate(gravityWellPrefab, pos, Quaternion.identity);
     }
@@ -171,7 +167,8 @@ public class GravityWellSpawner : MonoBehaviour {
         scoreText.text = " Score\n" + score.ToString();
     }
 
-    private void GeneratePositionSets() // Generate a CSV file of spawn locations. First row is X, 2nd is Y, 3rd is Z. Each column corresponds to a point in space
+    // Generate a CSV file of spawn locations. First row is X, 2nd is Y, 3rd is Z. Each column corresponds to a point in space
+    private void GeneratePositionSets()
     {
         table.Add(xSpawnList);
         table.Add(ySpawnList);
@@ -186,6 +183,7 @@ public class GravityWellSpawner : MonoBehaviour {
         Debug.Log("Generated positions!");
     }
 
+    // Load pre-generated spawn point data
     private void LoadData()
     {
         loadedData = SaveToExcel.instance.Load("SpawnGeneration/Gravity_Spawn_" + GameControl.instance.spawnNumber + ".csv");
